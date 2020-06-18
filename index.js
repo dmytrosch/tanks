@@ -67,7 +67,7 @@ class Engine {
           //out of field:
           enemy.x = 10000;
           enemy.y = 10000;
-          console.log("enemy is crushed running down!");
+          console.log(`enemy ${enemy.id} is crushed running down!`);
         }
       });
     }
@@ -97,7 +97,7 @@ class Engine {
       const aliveEnemies = this.enemyArr.filter(function (enemy) {
         return enemy.isAlive === true;
       });
-      return console.log(aliveEnemies);
+      return console.table(aliveEnemies);
     }
     constructor(shell) {
       super();
@@ -133,14 +133,14 @@ class Engine {
         const enemyToShoot = Tank.enemyArr
           .filter(function (enemy) {
             return tank.x === enemy.x || tank.y === enemy.y;
-          })
+          }) //ищем всех врагом с общими координатами
           .find(function (enemy) {
             return (
               (tank.side === -2 && tank.y < enemy.y) ||
               (tank.side === 0 && tank.y > enemy.y) ||
               (tank.side === 1 && tank.x < enemy.x) ||
               (tank.side === -1 && tank.x > enemy.x)
-            );
+            ); //ищем врага, в сторону которого повернут танк и, соответвенно, которого можно застрелить
           });
         enemyToShoot.isAlive = false;
         //out of field:
@@ -148,7 +148,7 @@ class Engine {
         enemyToShoot.y = 10000;
         tank._shellAmount--;
         tank._xp += 4;
-        console.log("enemy is shot!");
+        console.log(`enemy ${enemyToShoot.id} is shot!`);
       } else {
         console.log("not enough shell");
       }
@@ -169,7 +169,7 @@ class Engine {
               enemy.y = 10000;
               this._shellAmount--;
               this._xp += 4;
-              console.log("enemy is shot!");
+              console.log(`enemy ${enemy.id} is shot!`);
             }
           }
           if (this.y === y) {
