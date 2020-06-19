@@ -26,7 +26,7 @@ class Engine {
     //каждое движение по клетке идет проверка на наличие врага в этой клетке
     switch (this.side) {
       case 0: //едем вперед
-        for (let i = 1; i <= distance; i++) {
+        for (let i = 0; i < distance; i++) {
           this.y--;
           this.isHitting();
         }
@@ -34,7 +34,7 @@ class Engine {
 
         break;
       case 1: //едем вправо
-        for (let i = 1; i <= distance; i++) {
+        for (let i = 0; i < distance; i++) {
           this.x++;
           this.isHitting();
         }
@@ -42,7 +42,7 @@ class Engine {
 
         break;
       case -1: //едем влево
-        for (let i = 1; i <= distance; i++) {
+        for (let i = 0; i < distance; i++) {
           this.x--;
           this.isHitting();
         }
@@ -50,7 +50,7 @@ class Engine {
 
         break;
       case -2: //едем назад
-        for (let i = 1; i <= distance; i++) {
+        for (let i = 0; i < distance; i++) {
           this.y++;
           this.isHitting();
         }
@@ -60,16 +60,16 @@ class Engine {
   }
   isHitting() {
     //проверка на врага на клетке
-    Tank.enemyArr.forEach(function (enemy) {
+    Tank.enemyArr.forEach((enemy) => {
       const { x, y } = enemy;
-      if (tank.y === y && tank.x === x) {
+      if (this.y === y && this.x === x) {
         enemy.isAlive = false;
         //out of field:
         enemy.x = 10000;
         enemy.y = 10000;
         console.log(`enemy ${enemy.id} is crushed running down!`);
       }
-    });
+    }, this);
   }
   getCoord() {
     return console.log(`x: ${this.x}, y: ${this.y}`);
@@ -94,9 +94,9 @@ class Tank extends Engine {
     return console.table(this.enemyArr);
   }
   static getAliveEnemies() {
-    const aliveEnemies = this.enemyArr.filter(function (enemy) {
-      return enemy.isAlive === true;
-    });
+    const aliveEnemies = this.enemyArr.filter(
+      (enemy) => enemy.isAlive === true
+    );
     return console.table(aliveEnemies);
   }
   constructor(shell) {
@@ -107,7 +107,7 @@ class Tank extends Engine {
     this._fuelPerKM = 1;
   }
   get xp() {
-    return console.log(Math.floor(this._xp));
+    return console.log(Math.floor(this._xp)); //показываем достигнутый опыт целым числом
   }
   get fuel() {
     return console.log(this._fuel);
@@ -130,22 +130,20 @@ class Tank extends Engine {
       console.log("there is no a fuel!");
     }
   }
-  toShoot() { 
+  toShoot() {
     if (this._shellAmount > 0) {
       this._xp++;
       //this в цикле не работает, если заменить this на tank, то все ок
       const enemyToShoot = Tank.enemyArr
-        .filter(function (enemy) {
-          return this.x === enemy.x || this.y === enemy.y;
-        }) //ищем всех врагов с общей координатой
-        .find(function (enemy) {
+        .filter((enemy) => this.x === enemy.x || this.y === enemy.y, this) //ищем всех врагов с общей координатой
+        .find((enemy) => {
           return (
             (this.side === -2 && this.y < enemy.y) ||
             (this.side === 0 && this.y > enemy.y) ||
             (this.side === 1 && this.x < enemy.x) ||
             (this.side === -1 && this.x > enemy.x)
           ); //ищем врага, в сторону которого повернут танк и, соответвенно, которого можно застрелить
-        });
+        }, this);
 
       enemyToShoot.isAlive = false;
       //out of field:
@@ -154,44 +152,6 @@ class Tank extends Engine {
       this._shellAmount--;
       this._xp += 4;
       console.log(`enemy ${enemyToShoot.id} is shot!`);
-    } else {
-      console.log("not enough shell");
-    }
-  }
-  toShootOld() {
-    if (this._shellAmount > 0) {
-      this._xp++;
-      for (let enemy of Tank.enemyArr) {
-        const { x, y } = enemy;
-        if (this.x === x) {
-          if (
-            (this.side === -2 && this.y < y) ||
-            (this.side === 0 && this.y > y)
-          ) {
-            enemy.isAlive = false;
-            //out of field:
-            enemy.x = 10000;
-            enemy.y = 10000;
-            this._shellAmount--;
-            this._xp += 4;
-            console.log(`enemy ${enemy.id} is shot!`);
-          }
-        }
-        if (this.y === y) {
-          if (
-            (this.side === 1 && this.x < x) ||
-            (this.side === -1 && this.x > x)
-          ) {
-            enemy.isAlive = false;
-            //out of field:
-            enemy.x = 10000;
-            enemy.y = 10000;
-            this._shellAmount--;
-            this._xp += 4;
-            console.log("enemy is shot!");
-          }
-        }
-      }
     } else {
       console.log("not enough shell");
     }
