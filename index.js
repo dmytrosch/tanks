@@ -133,7 +133,6 @@ class Tank extends Engine {
   toShoot = () => {
     if (this._shellAmount > 0) {
       this._xp++;
-      //this в цикле не работает, если заменить this на tank, то все ок
       const enemyToShoot = Tank.enemyArr
         .filter((enemy) => this.x === enemy.x || this.y === enemy.y) //ищем всех врагов с общей координатой
         .find((enemy) => {
