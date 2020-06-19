@@ -58,7 +58,7 @@ class Engine {
         break;
     }
   }
-  isHitting() {
+  isHitting = () => {
     //проверка на врага на клетке
     Tank.enemyArr.forEach((enemy) => {
       const { x, y } = enemy;
@@ -69,8 +69,8 @@ class Engine {
         enemy.y = 10000;
         console.log(`enemy ${enemy.id} is crushed running down!`);
       }
-    }, this);
-  }
+    });
+  };
   getCoord() {
     return console.log(`x: ${this.x}, y: ${this.y}`);
   }
@@ -130,12 +130,12 @@ class Tank extends Engine {
       console.log("there is no a fuel!");
     }
   }
-  toShoot() {
+  toShoot = () => {
     if (this._shellAmount > 0) {
       this._xp++;
       //this в цикле не работает, если заменить this на tank, то все ок
       const enemyToShoot = Tank.enemyArr
-        .filter((enemy) => this.x === enemy.x || this.y === enemy.y, this) //ищем всех врагов с общей координатой
+        .filter((enemy) => this.x === enemy.x || this.y === enemy.y) //ищем всех врагов с общей координатой
         .find((enemy) => {
           return (
             (this.side === -2 && this.y < enemy.y) ||
@@ -143,19 +143,22 @@ class Tank extends Engine {
             (this.side === 1 && this.x < enemy.x) ||
             (this.side === -1 && this.x > enemy.x)
           ); //ищем врага, в сторону которого повернут танк и, соответвенно, которого можно застрелить
-        }, this);
-
-      enemyToShoot.isAlive = false;
-      //out of field:
-      enemyToShoot.x = 10000;
-      enemyToShoot.y = 10000;
-      this._shellAmount--;
-      this._xp += 4;
-      console.log(`enemy ${enemyToShoot.id} is shot!`);
+        });
+      if (enemyToShoot !== undefined) {
+        enemyToShoot.isAlive = false;
+        //out of field:
+        enemyToShoot.x = 10000;
+        enemyToShoot.y = 10000;
+        this._shellAmount--;
+        this._xp += 4;
+        console.log(`enemy ${enemyToShoot.id} is shot!`);
+      } else {
+        console.log("past!"); //мимо
+      }
     } else {
       console.log("not enough shell");
     }
-  }
+  };
 }
 
 const tank = new Tank(5);
